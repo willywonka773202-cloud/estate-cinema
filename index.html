@@ -416,7 +416,7 @@
             <div class="chip live"><span class="g"></span> Active &middot; For sale</div>
             <img id="gmainImg" src="media/fb-exterior.jpg" alt="5412 Fallbrook Avenue">
             <button class="play" id="listingPlay" type="button" aria-label="Play the listing film"><i></i></button>
-            <div class="chip count">Film &middot; 00:14</div>
+            <div class="chip count">Film &middot; 01:26</div>
           </div>
           <div class="thumbs" id="gthumbs">
             <img src="media/fb-exterior.jpg" class="active" alt="Exterior">
@@ -594,7 +594,7 @@
     if(lp && lscreen && FILM){
       lp.addEventListener('click', function(){
         var v = document.createElement('video');
-        v.className = 'reel'; v.src = FILM; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline','');
+        v.className = 'reel'; v.src = 'media/fb-tour.mp4'; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline','');
         lscreen.appendChild(v);
         lp.style.display = 'none';
         var img = document.getElementById('gmainImg'); if(img) img.style.opacity = '0';
