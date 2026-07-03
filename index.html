@@ -1,312 +1,569 @@
 <title>Estate Cinema — Cinematic Listing Films</title>
 <style>
   :root{
-    --bg:#FFFFFF; --bg2:#F5F3EF; --bg3:#FAF9F6;
-    --ink:#1C1A17; --sub:#6E6A63; --faint:#8A857C;
-    --line:#E7E3DB; --line2:#D6D1C6;
-    --accent:#8A6B3D; --accent-soft:#B08A4E;
-    --film:#0B0B0C;
-    --sans:-apple-system,"SF Pro Display","SF Pro Text",system-ui,"Helvetica Neue",Arial,sans-serif;
-    --serif:"Hoefler Text","Baskerville","Georgia",serif;
-    --maxw:1120px; --pill:980px;
+    /* grounds */
+    --theater:#0B0B0D; --theater-2:#141417; --theater-3:#1C1C20;
+    --bone:#F6F3EC; --bone-2:#EFEBE1; --card:#FFFFFF;
+    /* ink */
+    --ink:#17150F; --sub:#6B665C; --faint:#928C80;
+    --on-dark:#F4F1EA; --dim:#9C978C; --dim-2:#6E6A62;
+    /* metal accent */
+    --brass:#C2A063; --brass-deep:#A5854A; --brass-hi:#E6CE9C;
+    /* lines */
+    --line:#E4DFD3; --line-2:#D6D0C2; --line-dark:#2A2A2F;
+    /* semantic */
+    --live:#3F9E6A;
+    /* faces */
+    --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","SF Pro Display",system-ui,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
+    --maxw:1160px; --pill:980px;
+    --ease:cubic-bezier(.22,.61,.36,1);
   }
   *{box-sizing:border-box}
-  body{margin:0}
-  .page{background:var(--bg); color:var(--ink); font-family:var(--sans);
+  .page{background:var(--bone); color:var(--ink); font-family:var(--sans);
     font-size:17px; line-height:1.55; letter-spacing:-.003em;
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden}
-  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
-  h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.022em; text-wrap:balance}
-  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
   img{display:block; max-width:100%}
-  .eyebrow{font-size:12.5px; font-weight:600; letter-spacing:.14em; color:var(--accent); text-transform:uppercase}
-  .center{text-align:center}
+  a{color:inherit; text-decoration:none}
+  h1,h2,h3{margin:0; font-weight:400; letter-spacing:-.012em; text-wrap:balance}
 
-  .btn{display:inline-flex; align-items:center; gap:7px; font-size:15px; font-weight:500;
-    padding:11px 22px; border-radius:var(--pill); cursor:pointer; border:1px solid transparent; transition:.2s ease; white-space:nowrap}
-  .btn-dark{background:var(--ink); color:#fff}
-  .btn-dark:hover{background:#000; transform:translateY(-1px)}
-  .btn-light{background:var(--bg2); color:var(--ink); border-color:var(--line2)}
-  .btn-light:hover{background:#ECE8E0}
-  .link{color:var(--accent); font-weight:500; font-size:15px; display:inline-flex; align-items:center; gap:4px}
-  .link:hover{color:var(--accent-soft)}
-  .link::after{content:"›"; font-size:17px; transition:.2s}
+  /* ---- shared type devices ---- */
+  .slate{font-family:var(--mono); font-size:11.5px; font-weight:500; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--brass-deep); display:inline-flex; align-items:center; gap:10px}
+  .slate::before{content:""; width:22px; height:1px; background:var(--brass); opacity:.75}
+  .theater .slate{color:var(--brass-hi)}
+  .theater .slate::before{background:var(--brass-hi); opacity:.55}
+  .display{font-family:var(--serif); line-height:1.04; letter-spacing:-.02em; font-weight:400}
+  .lede{font-size:clamp(17px,1.65vw,20px); color:var(--sub); line-height:1.5; max-width:46ch}
+  .theater .lede{color:var(--dim)}
+
+  /* ---- acts / grounds ---- */
+  .act{padding:clamp(84px,11vw,148px) 0; position:relative}
+  .theater{background:var(--theater); color:var(--on-dark)}
+  .theater h1,.theater h2,.theater h3{color:var(--on-dark)}
+  .bone{background:var(--bone)}
+  .bone-2{background:var(--bone-2)}
+  .act-head{max-width:24ch}
+  .act-head.center{max-width:30ch; margin:0 auto; text-align:center}
+  .act-head h2{font-family:var(--serif); font-size:clamp(30px,4.5vw,54px); margin-top:20px}
+  .act-head .lede{margin-top:20px}
+  .act-head.center .lede{margin-left:auto; margin-right:auto}
+
+  /* ---- buttons ---- */
+  .btn{position:relative; display:inline-flex; align-items:center; gap:9px; font-size:15px; font-weight:500;
+    font-family:var(--sans); padding:13px 26px; border-radius:var(--pill); cursor:pointer; border:1px solid transparent;
+    transition:transform .35s var(--ease), background .3s var(--ease), box-shadow .35s var(--ease), border-color .3s; overflow:hidden; white-space:nowrap}
+  .btn::after{content:""; position:absolute; top:0; left:-140%; width:70%; height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent); transform:skewX(-18deg); transition:left .6s var(--ease)}
+  .btn:hover::after{left:150%}
+  .btn-brass{background:linear-gradient(180deg,var(--brass-hi),var(--brass)); color:#2B2410;
+    box-shadow:0 1px 0 rgba(255,255,255,.4) inset, 0 10px 26px -12px rgba(165,133,74,.7)}
+  .btn-brass:hover{transform:translateY(-2px); box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 16px 34px -12px rgba(165,133,74,.85)}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--line-2)}
+  .theater .btn-ghost{color:var(--on-dark); border-color:rgba(244,241,234,.28)}
+  .btn-ghost:hover{transform:translateY(-2px); border-color:var(--brass)}
+  .theater .btn-ghost:hover{border-color:var(--brass-hi); background:rgba(255,255,255,.04)}
+  .link{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--brass-deep);
+    display:inline-flex; align-items:center; gap:7px; transition:gap .3s var(--ease)}
+  .theater .link{color:var(--brass-hi)}
+  .link::after{content:"→"; transition:transform .3s var(--ease)}
+  .link:hover{gap:11px}
   .link:hover::after{transform:translateX(3px)}
+  :focus-visible{outline:2px solid var(--brass); outline-offset:3px; border-radius:3px}
 
-  .nav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.72);
-    backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid var(--line)}
-  .nav .wrap{display:flex; align-items:center; justify-content:space-between; height:52px}
-  .mark{font-size:18px; font-weight:600; letter-spacing:-.01em; display:flex; align-items:center; font-family:var(--serif)}
-  .mark .sl{color:var(--accent); margin-left:6px; font-weight:400; font-style:italic}
-  .nav-right{display:flex; align-items:center; gap:22px}
-  .nav-links{display:flex; gap:22px; font-size:13.5px; color:var(--sub)}
-  .nav-links a:hover{color:var(--ink)}
-  .nav .btn{padding:7px 15px; font-size:13.5px}
-  @media(max-width:720px){ .nav-links{display:none} }
+  /* ---- 3D scroll intro ---- */
+  #intro{position:fixed; inset:0; z-index:1000; overflow:hidden;
+    background:radial-gradient(130% 110% at 50% 42%, #17140F 0%, #0A0908 58%, #050505 100%);
+    will-change:opacity}
+  #intro canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+  .intro-stage{position:absolute; inset:0; display:grid; place-items:center; perspective:1200px; pointer-events:none}
+  .intro-word{text-align:center; transform-style:preserve-3d; will-change:transform,opacity}
+  .intro-word .ey{font-family:var(--mono); font-size:clamp(10px,1.1vw,13px); letter-spacing:.42em; text-transform:uppercase;
+    color:var(--brass-hi); opacity:0}
+  .intro-word .title{font-family:var(--serif); color:#F5F1E8; line-height:.94; letter-spacing:-.02em; margin-top:20px;
+    font-size:clamp(52px,10vw,150px); text-shadow:0 0 60px rgba(0,0,0,.6)}
+  .intro-word .title em{font-style:italic; color:var(--brass-hi)}
+  .intro-hint{position:absolute; left:50%; bottom:34px; transform:translateX(-50%); z-index:2;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.34em; text-transform:uppercase; color:var(--dim-2);
+    display:flex; flex-direction:column; align-items:center; gap:13px}
+  .intro-hint .bar{width:1px; height:46px; background:linear-gradient(var(--brass-hi), transparent); animation:hintpulse 2.2s var(--ease) infinite}
+  @keyframes hintpulse{0%,100%{opacity:.25; transform:scaleY(.65)}50%{opacity:1; transform:scaleY(1)}}
+  #introTrack{height:220vh}
+  body.intro-done #intro{pointer-events:none}
+  @media(prefers-reduced-motion:reduce){ #intro{display:none} #introTrack{display:none} }
 
-  .hero{padding:92px 0 20px; text-align:center}
-  .hero .eyebrow{margin-bottom:20px; display:inline-block}
-  .hero h1{font-size:clamp(40px,7vw,74px); line-height:1.02; margin:0 auto; max-width:15ch; font-family:var(--serif); font-weight:400}
-  .hero .sub{font-size:clamp(18px,2.2vw,22px); color:var(--sub); max-width:40ch; margin:22px auto 0; line-height:1.42; letter-spacing:-.01em}
-  .hero-cta{display:flex; gap:20px; justify-content:center; align-items:center; margin-top:34px; flex-wrap:wrap}
+  /* ---- nav ---- */
+  .nav{position:sticky; top:0; z-index:60; background:var(--theater); transition:background .4s var(--ease), border-color .4s, backdrop-filter .4s, height .4s var(--ease)}
+  .nav .wrap{display:flex; align-items:center; justify-content:space-between; height:74px; transition:height .4s var(--ease)}
+  .nav.shrunk{background:rgba(11,11,13,.66); backdrop-filter:saturate(160%) blur(18px); border-bottom:1px solid var(--line-dark)}
+  .nav.shrunk .wrap{height:58px}
+  .mark{font-family:var(--serif); font-size:22px; letter-spacing:.01em; color:var(--on-dark); display:flex; align-items:baseline; gap:8px}
+  .mark .cin{color:var(--brass-hi); font-style:italic}
+  .mark .dot{width:5px; height:5px; border-radius:50%; background:var(--brass); align-self:center; margin:0 1px}
+  .nav-links{display:flex; gap:30px; font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim)}
+  .nav-links a{transition:color .25s}
+  .nav-links a:hover{color:var(--brass-hi)}
+  .nav-right{display:flex; align-items:center; gap:26px}
+  .nav .btn{padding:9px 18px; font-size:13px}
+  @media(max-width:760px){ .nav-links{display:none} }
 
-  .stage{padding:56px 0 30px}
-  .frame{position:relative; aspect-ratio:16/9; width:100%; max-width:980px; margin:0 auto; border-radius:20px; overflow:hidden;
-    background:var(--film); box-shadow:0 2px 6px rgba(0,0,0,.08), 0 40px 80px -34px rgba(0,0,0,.45)}
-  .frame video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
-  .frame .cap{position:absolute; left:18px; bottom:16px; z-index:3; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
-    color:rgba(255,255,255,.9); display:flex; align-items:center; gap:8px; text-shadow:0 1px 6px rgba(0,0,0,.5)}
-  .frame .cap .dot{width:7px; height:7px; border-radius:50%; background:#E6CE9C; box-shadow:0 0 9px #E6CE9C}
+  /* ---- ACT 1: screening-room hero ---- */
+  .hero{padding-top:clamp(34px,5vw,52px); padding-bottom:clamp(64px,8vw,104px); overflow:hidden}
+  .hero-copy{max-width:32ch}
+  .hero h1{font-family:var(--serif); font-size:clamp(42px,6vw,74px); letter-spacing:-.028em; margin-top:22px; max-width:15ch}
+  .hero h1 em{font-style:italic; color:var(--brass-hi)}
+  .hero .lede{margin-top:26px; font-size:clamp(18px,2vw,22px); max-width:40ch}
+  .hero-cta{display:flex; gap:18px; align-items:center; margin-top:34px; flex-wrap:wrap}
+  .hero-trust{display:flex; gap:26px; flex-wrap:wrap; margin-top:40px; font-family:var(--mono);
+    font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim-2)}
+  .hero-trust span{display:inline-flex; align-items:center; gap:9px}
+  .hero-trust span::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--brass); opacity:.8}
 
-  section{padding:clamp(70px,9vw,116px) 0}
-  .sec-title{font-size:clamp(28px,4vw,46px); line-height:1.07; max-width:22ch; font-family:var(--serif); font-weight:400}
-  .sec-sub{font-size:clamp(16px,1.8vw,19px); color:var(--sub); max-width:46ch; margin-top:16px; line-height:1.45}
-  .center .sec-title,.center .sec-sub{margin-left:auto; margin-right:auto}
+  /* ---- the film screen ---- */
+  .screen-wrap{position:relative; margin-top:clamp(44px,6vw,72px)}
+  .ambient{position:absolute; inset:-8% -6% -22% -6%; z-index:0; pointer-events:none;
+    background:radial-gradient(60% 60% at 50% 42%, rgba(194,160,99,.30), rgba(194,160,99,.06) 46%, transparent 70%);
+    filter:blur(46px); opacity:.9}
+  .screen{position:relative; z-index:1; aspect-ratio:16/9; width:100%; max-width:1040px; margin:0 auto;
+    border-radius:20px; overflow:hidden; background:#000;
+    box-shadow:0 40px 110px -46px rgba(0,0,0,.85)}
+  .screen .reel{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  /* clickable play control (sample-listing film) */
+  .play{position:absolute; inset:0; z-index:7; display:grid; place-items:center; cursor:pointer; border:0; background:transparent; padding:0}
+  .play i{width:74px; height:74px; border-radius:50%; border:1px solid rgba(255,255,255,.75);
+    background:rgba(10,10,12,.28); backdrop-filter:blur(4px); display:grid; place-items:center; transition:transform .4s var(--ease), background .3s}
+  .play:hover i{transform:scale(1.09); background:rgba(10,10,12,.42)}
+  .play i::after{content:""; margin-left:5px; border-style:solid; border-width:9px 0 9px 15px; border-color:transparent transparent transparent #fff}
+  .listing-screen .reel{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:6; background:#000}
 
-  .vgrid{display:grid; gap:44px 40px; margin-top:60px; grid-template-columns:1fr}
-  @media(min-width:760px){ .vgrid{grid-template-columns:repeat(3,1fr)} }
-  .vitem .vk{font-size:38px; font-weight:600; letter-spacing:-.03em; font-family:var(--serif)}
-  .vitem .vk small{font-size:15px; color:var(--faint); font-weight:400; letter-spacing:0; font-family:var(--sans)}
-  .vitem .vline{width:26px; height:2px; background:var(--accent); margin:16px 0 16px; border-radius:2px}
-  .vitem h3{font-size:21px; letter-spacing:-.015em}
-  .vitem p{color:var(--sub); font-size:15.5px; margin:10px 0 0}
-  .sources{text-align:center; font-size:12.5px; color:var(--faint); margin-top:40px}
+  /* ---- ACT 2: the case ---- */
+  .stats{display:grid; gap:30px; margin-top:66px; grid-template-columns:1fr}
+  @media(min-width:760px){ .stats{grid-template-columns:repeat(3,1fr); gap:0} }
+  .stat{padding:8px 34px 8px 0}
+  @media(min-width:760px){ .stat{padding:4px 40px} .stat + .stat{border-left:1px solid var(--line)} .stat:first-child{padding-left:0} }
+  .stat .k{font-family:var(--serif); font-size:clamp(48px,6vw,72px); letter-spacing:-.03em; line-height:1;
+    font-variant-numeric:tabular-nums; color:var(--ink)}
+  .stat .k .u{font-size:.5em; color:var(--brass-deep); margin-left:2px}
+  .stat h3{font-family:var(--sans); font-weight:600; font-size:17px; margin:20px 0 8px; letter-spacing:-.01em}
+  .stat p{color:var(--sub); font-size:15px; margin:0}
+  .sources{margin-top:52px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--faint); max-width:80ch}
 
-  /* sample gallery */
-  .work-sec{background:var(--bg2)}
-  .gcard{background:var(--bg); border-radius:24px; overflow:hidden; margin-top:50px; border:1px solid var(--line);
-    box-shadow:0 2px 4px rgba(0,0,0,.04), 0 34px 64px -36px rgba(0,0,0,.26)}
-  .gmain{position:relative; aspect-ratio:16/9; overflow:hidden; background:#000}
-  .gmain img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
-  .gtag{position:absolute; top:16px; left:16px; z-index:3; background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
-    padding:6px 13px; border-radius:var(--pill); font-size:11.5px; font-weight:600; letter-spacing:.02em}
-  .gthumbs{display:flex; gap:8px; padding:12px; overflow-x:auto; background:var(--bg3); border-top:1px solid var(--line)}
-  .gthumbs img{height:66px; width:104px; object-fit:cover; border-radius:8px; cursor:pointer; flex:0 0 auto; opacity:.55; transition:.2s; border:2px solid transparent}
-  .gthumbs img:hover{opacity:.85}
-  .gthumbs img.active{opacity:1; border-color:var(--ink)}
-  .gcaption{text-align:center; font-size:13px; color:var(--faint); margin-top:20px}
+  /* ---- ACT 3: premiere / listing ---- */
+  .premiere-grid{display:grid; gap:40px; grid-template-columns:1fr; margin-top:clamp(44px,6vw,66px)}
+  @media(min-width:1000px){ .premiere-grid{grid-template-columns:1.28fr .72fr; gap:52px; align-items:start} }
+  .listing-screen{position:relative; aspect-ratio:16/10; border-radius:16px; overflow:hidden; background:#000;
+    border:1px solid rgba(230,206,156,.16); box-shadow:0 40px 90px -46px rgba(0,0,0,.85)}
+  .listing-screen img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .5s var(--ease)}
+  .chip{position:absolute; z-index:8; font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    display:inline-flex; align-items:center; gap:8px; padding:8px 13px; border-radius:var(--pill);
+    background:rgba(10,10,12,.6); backdrop-filter:blur(8px); color:#fff; border:1px solid rgba(255,255,255,.12)}
+  .chip.live{top:16px; left:16px}
+  .chip.live .g{width:8px; height:8px; border-radius:50%; background:var(--live); box-shadow:0 0 0 4px rgba(63,158,106,.22)}
+  .chip.count{bottom:16px; right:16px; color:var(--brass-hi)}
+  .listing-screen .lower{left:18px; right:18px; bottom:16px}
+  .thumbs{display:flex; gap:10px; margin-top:14px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin}
+  .thumbs img{height:60px; width:92px; object-fit:cover; border-radius:8px; cursor:pointer; flex:0 0 auto;
+    opacity:.5; transition:opacity .3s, transform .3s var(--ease); border:1px solid transparent}
+  .thumbs img:hover{opacity:.85; transform:translateY(-2px)}
+  .thumbs img.active{opacity:1; border-color:var(--brass-hi)}
+  .dossier{color:var(--dim)}
+  .dossier .addr{font-family:var(--serif); font-size:clamp(24px,2.6vw,32px); color:var(--on-dark); letter-spacing:-.02em}
+  .dossier .loc{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim-2); margin-top:8px}
+  .dossier .price{display:flex; align-items:baseline; gap:12px; margin-top:22px; padding-bottom:22px; border-bottom:1px solid var(--line-dark)}
+  .dossier .price .p{font-family:var(--serif); font-size:clamp(28px,3vw,38px); color:var(--brass-hi); letter-spacing:-.02em}
+  .dossier .price .mls{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--dim-2)}
+  .specrow{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:22px; background:var(--line-dark); border:1px solid var(--line-dark); border-radius:12px; overflow:hidden}
+  .specrow .s{background:var(--theater-2); padding:15px 16px}
+  .specrow .s .n{font-family:var(--serif); font-size:22px; color:var(--on-dark); font-variant-numeric:tabular-nums}
+  .specrow .s .l{font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim-2); margin-top:4px}
+  .dossier .desc{font-size:15px; line-height:1.62; color:var(--dim); margin-top:22px}
+  .dossier .foot{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:26px; flex-wrap:wrap}
+  .dossier .credit{font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim-2)}
 
-  /* before/after */
-  .ba{position:relative; aspect-ratio:16/9; width:100%; max-width:980px; margin:52px auto 0; border-radius:18px; overflow:hidden;
-    user-select:none; --pos:52%; border:1px solid var(--line); box-shadow:0 2px 4px rgba(0,0,0,.05), 0 34px 64px -36px rgba(0,0,0,.26);
-    --kimg:url("media/kitchen.jpg")}
+  /* ---- ATMOSPHERE: full-bleed cinematic band ---- */
+  .atmo{position:relative; min-height:80vh; display:grid; place-items:center; overflow:hidden; text-align:center;
+    padding:clamp(90px,13vw,150px) 0}
+  .atmo-bg{position:absolute; inset:-6% 0; background-size:cover; background-position:center; will-change:transform}
+  .atmo-scrim{position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(6,6,8,.62), rgba(6,6,8,.28) 42%, rgba(6,6,8,.82)),
+      radial-gradient(120% 90% at 50% 40%, transparent 45%, rgba(6,6,8,.5))}
+  .atmo-inner{position:relative; z-index:2; max-width:26ch; color:var(--on-dark)}
+  .atmo-inner .slate{color:var(--brass-hi); justify-content:center}
+  .atmo-inner .slate::before{background:var(--brass-hi); opacity:.7}
+  .atmo-inner h2{font-family:var(--serif); font-size:clamp(34px,5.4vw,68px); line-height:1.03; color:#fff; margin-top:18px; letter-spacing:-.02em}
+  .atmo-inner h2 em{font-style:italic; color:var(--brass-hi)}
+  .atmo-inner .lede{color:rgba(244,241,234,.86); margin:22px auto 0; max-width:50ch}
+
+  /* ---- ACT 4: the grade / before-after ---- */
+  .ba{position:relative; aspect-ratio:16/9; width:100%; max-width:1040px; margin:clamp(44px,6vw,60px) auto 0;
+    border-radius:16px; overflow:hidden; user-select:none; --pos:50%; --kimg:url("media/kitchen.jpg");
+    border:1px solid var(--line-2); box-shadow:0 30px 70px -40px rgba(0,0,0,.4)}
   .ba-layer{position:absolute; inset:0; background-image:var(--kimg); background-size:cover; background-position:center}
-  .ba-layer.before{clip-path:inset(0 calc(100% - var(--pos)) 0 0); filter:saturate(.5) brightness(.64) contrast(.9)}
-  .ba-layer.before::after{content:""; position:absolute; inset:0; background:rgba(56,60,70,.24)}
+  /* Enhanced = graded, present it clean with a touch of pop */
+  .ba-layer.after{filter:saturate(1.06) contrast(1.05) brightness(1.01)}
+  /* Original = a real phone photo of the SAME room: hazy, cool, soft, blown windows, sensor grain */
+  .ba-layer.before{clip-path:inset(0 calc(100% - var(--pos)) 0 0); filter:contrast(.79) brightness(1.06) saturate(.6) blur(.55px)}
+  .ba-layer.before::before{content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      linear-gradient(176deg, rgba(240,244,248,.62) 0%, rgba(240,244,248,.16) 24%, rgba(240,244,248,0) 42%),
+      linear-gradient(0deg, rgba(140,158,148,.16), rgba(140,158,148,.16))}
+  .ba-layer.before::after{content:""; position:absolute; inset:0; pointer-events:none; opacity:.26; mix-blend-mode:overlay;
+    background-image:radial-gradient(rgba(0,0,0,.55) .5px, transparent .6px); background-size:2px 2px}
   .ba-range{position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:ew-resize; z-index:9}
-  .ba-handle{position:absolute; top:0; bottom:0; left:var(--pos); width:2px; background:#fff; z-index:8; pointer-events:none; box-shadow:0 0 0 1px rgba(0,0,0,.1)}
-  .ba-handle::after{content:"‹ ›"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px;
-    border-radius:50%; background:#fff; color:var(--ink); font-size:13px; font-weight:700; letter-spacing:1px; display:grid; place-items:center; box-shadow:0 4px 14px rgba(0,0,0,.28)}
-  .ba-tag{position:absolute; top:14px; z-index:8; font-size:11px; font-weight:600; padding:5px 11px; border-radius:var(--pill); background:rgba(255,255,255,.9); backdrop-filter:blur(4px)}
-  .ba-tag.l{left:14px; color:var(--sub)} .ba-tag.r{right:14px; color:var(--ink)}
+  .ba-handle{position:absolute; top:0; bottom:0; left:var(--pos); width:2px; z-index:8; pointer-events:none;
+    background:linear-gradient(180deg, var(--brass-hi), #fff, var(--brass-hi)); box-shadow:0 0 14px rgba(230,206,156,.5)}
+  .ba-handle::after{content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:46px; height:46px;
+    border-radius:50%; background:rgba(11,11,13,.72); backdrop-filter:blur(6px); border:1px solid var(--brass-hi);
+    box-shadow:0 6px 20px rgba(0,0,0,.4)}
+  .ba-handle::before{content:"‹ ›"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1;
+    font-family:var(--mono); font-size:13px; letter-spacing:1px; color:var(--brass-hi)}
+  .ba.nudge .ba-handle{animation:nudge 1.4s var(--ease) 1}
+  @keyframes nudge{0%,100%{transform:translateX(0)}30%{transform:translateX(-16px)}60%{transform:translateX(12px)}}
+  .ba-tag{position:absolute; top:16px; z-index:8; font-family:var(--mono); font-size:10.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    padding:7px 12px; border-radius:var(--pill); backdrop-filter:blur(8px)}
+  .ba-tag .m{opacity:.62; margin-left:6px}
+  .ba-tag.l{left:16px; background:rgba(20,20,22,.5); color:#E9E6DF; border:1px solid rgba(255,255,255,.14)}
+  .ba-tag.r{right:16px; background:rgba(246,243,236,.86); color:var(--ink); border:1px solid var(--line-2)}
+  .ba-tag.r .m{color:var(--brass-deep); opacity:1}
 
-  .how-sec{background:var(--bg2)}
-  .steps{display:grid; gap:16px; margin-top:52px; grid-template-columns:1fr}
-  @media(min-width:820px){ .steps{grid-template-columns:repeat(3,1fr)} }
-  .step{background:var(--bg); border:1px solid var(--line); border-radius:18px; padding:30px 28px 32px}
-  .step .num{font-size:14px; font-weight:600; color:var(--accent); letter-spacing:.04em}
-  .step h3{font-size:21px; margin:14px 0 10px; letter-spacing:-.015em}
-  .step p{color:var(--sub); font-size:15.5px; margin:0}
+  /* ---- ACT 5: three takes ---- */
+  .takes{display:grid; gap:18px; margin-top:clamp(44px,6vw,64px); grid-template-columns:1fr}
+  @media(min-width:840px){ .takes{grid-template-columns:repeat(3,1fr)} }
+  .take{position:relative; background:var(--theater-2); border:1px solid var(--line-dark); border-radius:16px; padding:32px 30px 34px; overflow:hidden;
+    transition:transform .4s var(--ease), border-color .4s}
+  .take:hover{transform:translateY(-4px); border-color:rgba(230,206,156,.4)}
+  .take .no{font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--brass-hi)}
+  .take .big{position:absolute; top:-14px; right:14px; font-family:var(--serif); font-size:120px; line-height:1; color:rgba(230,206,156,.06); pointer-events:none}
+  .take h3{font-family:var(--serif); font-size:23px; margin:16px 0 12px; color:var(--on-dark)}
+  .take p{color:var(--dim); font-size:15px; margin:0; max-width:34ch}
 
-  .tiers{display:grid; gap:16px; margin-top:52px; grid-template-columns:1fr}
+  /* ---- ACT 6: packages ---- */
+  .tiers{display:grid; gap:16px; margin-top:clamp(44px,6vw,60px); grid-template-columns:1fr}
   @media(min-width:680px){ .tiers{grid-template-columns:repeat(2,1fr)} }
-  @media(min-width:1000px){ .tiers{grid-template-columns:repeat(4,1fr)} }
-  .tier{background:var(--bg); border:1px solid var(--line); border-radius:18px; padding:28px 24px; display:flex; flex-direction:column}
-  .tier.feature{border-color:var(--ink); box-shadow:0 20px 44px -30px rgba(0,0,0,.4)}
-  .tier .tname{font-size:18px; font-weight:600}
-  .tier .amt{font-size:30px; font-weight:600; letter-spacing:-.025em; margin:14px 0 2px; font-family:var(--serif)}
-  .tier .amt small{font-size:13px; color:var(--faint); font-weight:400; font-family:var(--sans)}
-  .tier .amt.free{color:var(--accent)}
-  .tier ul{list-style:none; padding:0; margin:18px 0 22px; display:flex; flex-direction:column; gap:11px; flex:1}
-  .tier li{font-size:14.5px; color:var(--sub); padding-left:22px; position:relative}
-  .tier li::before{content:""; position:absolute; left:2px; top:6px; width:9px; height:5px; border-left:1.6px solid var(--accent); border-bottom:1.6px solid var(--accent); transform:rotate(-45deg)}
+  @media(min-width:1040px){ .tiers{grid-template-columns:repeat(4,1fr)} }
+  .tier{position:relative; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:30px 26px; display:flex; flex-direction:column;
+    transition:transform .4s var(--ease), box-shadow .4s var(--ease)}
+  .tier:hover{transform:translateY(-4px); box-shadow:0 24px 50px -34px rgba(0,0,0,.3)}
+  .tier.feature{border-color:transparent; background:linear-gradient(180deg,#fffdf8,#fff); box-shadow:0 0 0 1.5px var(--brass), 0 30px 60px -34px rgba(165,133,74,.5)}
+  .tier.feature::before{content:"Most booked"; position:absolute; top:-11px; left:26px; font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+    background:linear-gradient(180deg,var(--brass-hi),var(--brass)); color:#2B2410; padding:4px 11px; border-radius:var(--pill)}
+  .tier .tname{font-family:var(--serif); font-size:20px}
+  .tier .amt{font-family:var(--serif); font-size:32px; letter-spacing:-.02em; margin:12px 0 2px}
+  .tier .amt small{font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--faint)}
+  .tier .amt.free{color:var(--brass-deep)}
+  .tier ul{list-style:none; padding:0; margin:20px 0 24px; display:flex; flex-direction:column; gap:12px; flex:1}
+  .tier li{font-size:14.5px; color:var(--sub); padding-left:24px; position:relative}
+  .tier li::before{content:""; position:absolute; left:2px; top:6px; width:10px; height:6px; border-left:1.6px solid var(--brass); border-bottom:1.6px solid var(--brass); transform:rotate(-45deg)}
   .tier .btn{justify-content:center; width:100%}
-  .deposit{display:flex; gap:18px; align-items:center; margin-top:28px; background:var(--bg2); border-radius:16px; padding:24px 28px}
-  .deposit .k{font-size:38px; font-weight:600; letter-spacing:-.03em; line-height:1; font-family:var(--serif)}
-  .deposit p{margin:0; font-size:15px; color:var(--sub)}
-  .deposit b{color:var(--ink); font-weight:600}
+  .deposit{display:flex; gap:22px; align-items:center; margin-top:26px; background:var(--theater);
+    border-radius:18px; padding:28px 32px; color:var(--dim)}
+  .deposit .k{font-family:var(--serif); font-size:clamp(40px,5vw,54px); letter-spacing:-.03em; line-height:1; color:var(--brass-hi); flex:0 0 auto}
+  .deposit p{margin:0; font-size:15px; max-width:70ch}
+  .deposit b{color:var(--on-dark); font-weight:600}
 
-  .cta-sec{background:var(--ink); color:#fff}
-  .cta-sec .eyebrow{color:var(--accent-soft)}
-  .cta-grid{display:grid; gap:36px; grid-template-columns:1fr}
-  @media(min-width:860px){ .cta-grid{grid-template-columns:1.05fr .95fr; gap:56px; align-items:center} }
-  .cta-sec h2{font-size:clamp(28px,4vw,44px); line-height:1.06; color:#fff; font-family:var(--serif); font-weight:400}
-  .cta-sec .sec-sub{color:#A9A49B}
-  form{display:flex; flex-direction:column; gap:11px}
-  form input{font-family:var(--sans); font-size:16px; color:#fff; background:#161513; border:1px solid #38352F; border-radius:12px; padding:14px 16px}
-  form input::placeholder{color:#8A857C}
-  form input:focus{outline:none; border-color:var(--accent-soft); box-shadow:0 0 0 3px rgba(176,138,78,.25)}
-  form .btn-dark{background:#fff; color:var(--ink); justify-content:center; padding:14px; margin-top:4px}
-  form .btn-dark:hover{background:#EDEBE6}
-  .form-note{font-size:12.5px; color:#8A857C; margin-top:2px}
-  .form-done{display:none; padding:22px 0; color:#fff; font-size:19px; font-weight:500}
+  /* ---- ACT 7: book / CTA ---- */
+  .book-grid{display:grid; gap:40px; grid-template-columns:1fr}
+  @media(min-width:900px){ .book-grid{grid-template-columns:1.05fr .95fr; gap:60px; align-items:center} }
+  .book h2{font-family:var(--serif); font-size:clamp(32px,4.4vw,52px)}
+  .book .lede{margin-top:20px}
+  form{display:flex; flex-direction:column; gap:12px}
+  form input{font-family:var(--sans); font-size:16px; color:var(--on-dark); background:var(--theater-2);
+    border:1px solid var(--line-dark); border-radius:13px; padding:15px 17px; transition:border-color .3s, box-shadow .3s}
+  form input::placeholder{color:#7C776D}
+  form input:focus{outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(194,160,99,.22)}
+  form .btn-brass{justify-content:center; padding:15px; margin-top:6px; font-size:16px}
+  .form-note{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:#7C776D; margin-top:4px}
+  .form-done{display:none; padding:26px 24px; border:1px solid var(--line-dark); border-radius:14px; color:var(--on-dark); font-size:17px}
+  .form-done b{color:var(--brass-hi)}
 
-  footer{background:var(--bg2); border-top:1px solid var(--line); padding:30px 0; color:var(--faint); font-size:13px}
-  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px}
+  /* ---- footer ---- */
+  footer{background:var(--theater); border-top:1px solid var(--line-dark); padding:34px 0; color:var(--dim-2)}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase}
+  footer .mark{font-size:17px}
 
-  @media(prefers-reduced-motion:reduce){ *{animation:none !important} }
+  /* ---- reveal motion ---- */
+  .rise{opacity:0; transform:translateY(24px); transition:opacity .9s var(--ease), transform .9s var(--ease)}
+  .rise.in{opacity:1; transform:none}
+  .rise[data-d="1"]{transition-delay:.08s}
+  .rise[data-d="2"]{transition-delay:.16s}
+  .rise[data-d="3"]{transition-delay:.24s}
+  /* hero load sequence */
+  .lift{opacity:0; transform:translateY(26px); animation:lift 1s var(--ease) forwards}
+  .lift[data-s="1"]{animation-delay:.15s}
+  .lift[data-s="2"]{animation-delay:.3s}
+  .lift[data-s="3"]{animation-delay:.45s}
+  .lift[data-s="4"]{animation-delay:.6s}
+  @keyframes lift{to{opacity:1; transform:none}}
+  .screen .bars{animation:barsIn 1.1s var(--ease) .2s both}
+  @keyframes barsIn{from{height:50%}to{height:8.5%}}
+  .screen-wrap .screen{animation:bloom 1.3s var(--ease) .35s both}
+  @keyframes bloom{from{opacity:0; transform:scale(1.03)}to{opacity:1; transform:none}}
+  .screen-wrap .ambient{animation:amb 1.6s var(--ease) .5s both}
+  @keyframes amb{from{opacity:0}to{opacity:.9}}
+
+  @media(prefers-reduced-motion:reduce){
+    .rise{opacity:1; transform:none; transition:none}
+    .lift{opacity:1; transform:none; animation:none}
+    .screen .reel{animation:none}
+    .grain{animation:none}
+    .lower .rec{animation:none}
+    .screen .bars,.screen-wrap .screen,.screen-wrap .ambient{animation:none}
+    .btn,.tier,.take,.thumbs img{transition:none}
+  }
 </style>
+
+<noscript><style>#intro,#introTrack{display:none!important}</style></noscript>
+
+<div id="intro">
+  <canvas id="warp"></canvas>
+  <div class="intro-stage">
+    <div class="intro-word" id="introWord">
+      <div class="ey" id="introEy">Cinematic Listing Films &middot; Los Angeles</div>
+      <div class="title">Estate <em>Cinema</em></div>
+    </div>
+  </div>
+  <div class="intro-hint" id="introHint"><span>Scroll to enter</span><span class="bar"></span></div>
+</div>
+<div id="introTrack"></div>
 
 <div class="page">
 
-  <nav class="nav">
+  <!-- NAV -->
+  <header class="nav" id="nav">
     <div class="wrap">
-      <div class="mark">Estate<span class="sl">Cinema</span></div>
+      <a class="mark" href="#top">Estate<span class="dot"></span><span class="cin">Cinema</span></a>
       <div class="nav-right">
-        <div class="nav-links">
-          <a href="#work">Work</a><a href="#how">How it works</a><a href="#pricing">Pricing</a>
-        </div>
-        <a href="#sample" class="btn btn-dark">Get a free sample</a>
-      </div>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <div class="wrap">
-      <span class="eyebrow">Cinematic listing films</span>
-      <h1>Every listing deserves to be filmed.</h1>
-      <p class="sub">We turn the photos you already have into a cinematic walkthrough &mdash; the kind buyers watch to the end, and show up pre-sold.</p>
-      <div class="hero-cta">
-        <a href="#sample" class="btn btn-dark">Get a free sample of your listing</a>
-        <a href="#work" class="link">See the work</a>
+        <nav class="nav-links">
+          <a href="#work">The Reel</a>
+          <a href="#grade">The Grade</a>
+          <a href="#how">Process</a>
+          <a href="#pricing">Packages</a>
+        </nav>
+        <a href="#sample" class="btn btn-brass">Free sample</a>
       </div>
     </div>
   </header>
 
-  <div class="stage" id="work">
+  <!-- ACT 1 -->
+  <section class="act theater hero" id="top">
     <div class="wrap">
-      <div class="frame">
-        <video src="media/hero-web.mp4" poster="media/hero-frame.jpg" autoplay muted loop playsinline></video>
-        <div class="cap"><span class="dot"></span> Cinematic tour &middot; sample</div>
+      <div class="hero-copy">
+        <span class="slate lift" data-s="1">Cinematic Listing Films &middot; Los Angeles</span>
+        <h1 class="lift" data-s="2">Every listing deserves to be <em>filmed.</em></h1>
+        <p class="lede lift" data-s="3">We turn the photos you already have into a cinematic walkthrough &mdash; the film buyers watch to the end, and arrive pre-sold.</p>
+        <div class="hero-cta lift" data-s="4">
+          <a href="#sample" class="btn btn-brass">Get a free sample of your listing</a>
+          <a href="#work" class="link">Watch the reel</a>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <section>
-    <div class="wrap center">
-      <h2 class="sec-title">A photo is a moment.<br>A film is the walkthrough.</h2>
-      <p class="sec-sub">More eyes on the listing means more showings &mdash; and more showings means a faster close. AI just made the film almost free to produce.</p>
-    </div>
-    <div class="wrap">
-      <div class="vgrid">
-        <div class="vitem"><div class="vk">+6%<small> sale price</small></div><div class="vline"></div><h3>Sells for more</h3><p>Homes marketed with video have sold for around 6% more (Realtor.com). On a $1M listing, that&rsquo;s roughly $60,000.</p></div>
-        <div class="vitem"><div class="vk">2&times;<small> the views</small></div><div class="vline"></div><h3>Seen by more buyers</h3><p>Listings with a video pull about double the views and more saves than photo-only listings &mdash; more eyes, more showings.</p></div>
-        <div class="vitem"><div class="vk">32%<small> faster</small></div><div class="vline"></div><h3>Off the market sooner</h3><p>Strong visuals help homes sell about a third faster &mdash; fewer weeks of carrying costs and fewer price cuts.</p></div>
+      <div class="screen-wrap" id="work">
+        <div class="ambient"></div>
+        <figure class="screen">
+          <video class="reel" id="heroReel" poster="media/hero-frame.jpg" autoplay muted loop playsinline></video>
+        </figure>
       </div>
-      <p class="sources">Sources: Realtor.com (2023), Zillow listing data, and real-estate photography industry studies. Figures are market averages, not a guarantee for any individual home.</p>
+      <div class="hero-trust lift" data-s="4">
+        <span>Filmed from your own photos</span>
+        <span>Delivered in 48 hours</span>
+        <span>Formatted for MLS &amp; social</span>
+      </div>
     </div>
   </section>
 
-  <section class="work-sec" id="gallery">
-    <div class="wrap center">
-      <span class="eyebrow">The finished look</span>
-      <h2 class="sec-title" style="margin-top:14px">A film for every room.</h2>
-      <p class="sec-sub">A sample walkthrough &mdash; stills turned into a cinematic tour, room by room. This is the quality your listing gets.</p>
-    </div>
+  <!-- ACT 2 -->
+  <section class="act bone">
     <div class="wrap">
-      <div class="gcard">
-        <div class="gmain">
-          <span class="gtag">Sample tour</span>
-          <img id="gmainImg" src="media/exterior.jpg" alt="Modern hillside home at twilight">
+      <div class="act-head rise">
+        <span class="slate">The Case for Film</span>
+        <h2>A photo is a moment. A film is the walkthrough.</h2>
+        <p class="lede">More eyes on a listing means more showings &mdash; and more showings means a faster close. AI made the film almost free to produce.</p>
+      </div>
+      <div class="stats">
+        <div class="stat rise" data-d="1">
+          <div class="k"><span class="ct" data-to="6" data-pre="+">+0</span><span class="u">%</span></div>
+          <h3>Sells for more</h3>
+          <p>Homes marketed with video have sold for around 6% more (Realtor.com, 2023). On a $1M listing, roughly $60,000.</p>
         </div>
-        <div class="gthumbs" id="gthumbs">
-          <img data-full="media/exterior.jpg" src="media/exterior.jpg" class="active" alt="Twilight exterior">
-          <img data-full="media/living.jpg" src="media/living.jpg" alt="Living room">
-          <img data-full="media/kitchen.jpg" src="media/kitchen.jpg" alt="Kitchen">
-          <img data-full="media/suite.jpg" src="media/suite.jpg" alt="Primary suite">
-          <img data-full="media/bath.jpg" src="media/bath.jpg" alt="Spa bath">
-          <img data-full="media/pool.jpg" src="media/pool.jpg" alt="Pool and patio">
+        <div class="stat rise" data-d="2">
+          <div class="k"><span class="ct" data-to="2">0</span><span class="u">&times;</span></div>
+          <h3>Seen by more buyers</h3>
+          <p>Listings with a video pull about double the views and more saves than photo-only listings &mdash; more eyes, more showings.</p>
+        </div>
+        <div class="stat rise" data-d="3">
+          <div class="k"><span class="ct" data-to="32">0</span><span class="u">%</span></div>
+          <h3>Off the market sooner</h3>
+          <p>Strong visuals help homes sell about a third faster &mdash; fewer weeks of carrying costs and fewer price cuts.</p>
         </div>
       </div>
-      <p class="gcaption">Sample project shown for illustration &mdash; representative of the finished cinematic look.</p>
+      <p class="sources rise">Sources: Realtor.com (2023), Zillow listing data, real-estate photography studies. Figures are market averages, not a guarantee for any individual home.</p>
     </div>
   </section>
 
-  <section>
-    <div class="wrap center">
-      <span class="eyebrow">Photo enrichment</span>
-      <h2 class="sec-title" style="margin-top:14px">Every photo, lit like it&rsquo;s worth the ask.</h2>
-      <p class="sec-sub">Same room. Same truth. We never change what the home is &mdash; we give the shot the light and depth a pro camera would have caught. Drag to compare.</p>
-    </div>
+  <!-- ACT 3 -->
+  <section class="act theater" id="sample-listing">
     <div class="wrap">
-      <div class="ba" id="ba">
+      <div class="act-head rise">
+        <span class="slate">A Recent Sample</span>
+        <h2>See the finished look.</h2>
+        <p class="lede">A sample walkthrough, presented the way a buyer meets it &mdash; film first, then the details.</p>
+      </div>
+      <div class="premiere-grid">
+        <div class="rise" data-d="1">
+          <div class="listing-screen" id="listingScreen">
+            <div class="chip live"><span class="g"></span> Sample film</div>
+            <img id="gmainImg" src="media/living.jpg" alt="Sample interior">
+            <button class="play" id="listingPlay" type="button" aria-label="Play the listing film"><i></i></button>
+            <div class="chip count">Film &middot; 00:38</div>
+          </div>
+          <div class="thumbs" id="gthumbs">
+            <img src="media/living.jpg" class="active" alt="Living room">
+            <img src="media/kitchen.jpg" alt="Kitchen">
+            <img src="media/suite.jpg" alt="Primary suite">
+            <img src="media/bath.jpg" alt="Spa bath">
+            <img src="media/pool.jpg" alt="Pool &amp; patio">
+            <img src="media/exterior.jpg" alt="Twilight exterior">
+          </div>
+        </div>
+        <div class="dossier rise" data-d="2">
+          <div class="addr">A modern canyon home</div>
+          <div class="loc">Sample walkthrough</div>
+          <div class="specrow">
+            <div class="s"><div class="n">5</div><div class="l">Beds</div></div>
+            <div class="s"><div class="n">6</div><div class="l">Baths</div></div>
+            <div class="s"><div class="n">5,842</div><div class="l">Sq ft</div></div>
+            <div class="s"><div class="n">0.9</div><div class="l">Acre lot</div></div>
+            <div class="s"><div class="n">2024</div><div class="l">Built</div></div>
+            <div class="s"><div class="n">Pool</div><div class="l">Infinity</div></div>
+          </div>
+          <p class="desc">Set behind private gates on nearly an acre, this new-build single-story home opens through walls of glass to an infinity pool and unbroken canyon views. Vaulted white-oak ceilings, a Calacatta waterfall kitchen, a spa-caliber primary suite, and a covered outdoor kitchen &mdash; indoor-outdoor living at its most cinematic, wrapped in canyon quiet, moments from the city.</p>
+          <div class="foot">
+            <span class="credit">Filmed &amp; graded by Estate Cinema</span>
+            <a href="#sample" class="btn btn-brass">Get this for your listing</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATMOSPHERE -->
+  <section class="atmo" id="atmosphere">
+    <div class="atmo-bg" id="atmoBg" style="background-image:url('media/exterior.jpg')"></div>
+    <div class="atmo-scrim"></div>
+    <div class="wrap atmo-inner rise">
+      <span class="slate">The Arrival</span>
+      <h2>Make them fall in love <em>before</em> they walk in.</h2>
+      <p class="lede">Twilight, motion, the right light on the water. Your film is the open house that runs 24/7 &mdash; on every feed, in every inbox, at the exact moment a buyer starts to dream.</p>
+    </div>
+  </section>
+
+  <!-- ACT 4 -->
+  <section class="act bone" id="grade">
+    <div class="wrap">
+      <div class="act-head center rise">
+        <span class="slate" style="justify-content:center">Photo Enrichment</span>
+        <h2>Every photo, lit like it&rsquo;s worth the ask.</h2>
+        <p class="lede">Same room. Same light &mdash; corrected. This is your phone&rsquo;s shot beside the graded frame. Drag to compare.</p>
+      </div>
+      <div class="ba rise" id="ba">
         <div class="ba-layer after"></div>
         <div class="ba-layer before"></div>
-        <span class="ba-tag l">Original</span>
-        <span class="ba-tag r">Enhanced</span>
+        <span class="ba-tag l">Original <span class="m">Your phone</span></span>
+        <span class="ba-tag r">Enhanced <span class="m">Estate Cinema</span></span>
         <div class="ba-handle"></div>
-        <input class="ba-range" id="baRange" type="range" min="0" max="100" value="52" aria-label="Compare original and enhanced photo">
+        <input class="ba-range" id="baRange" type="range" min="0" max="100" value="50" aria-label="Compare original phone photo and enhanced photo">
       </div>
     </div>
   </section>
 
-  <section class="how-sec" id="how">
-    <div class="wrap center">
-      <span class="eyebrow">How it works</span>
-      <h2 class="sec-title" style="margin-top:14px">Three steps. You never touch a timeline.</h2>
-    </div>
+  <!-- ACT 5 -->
+  <section class="act theater" id="how">
     <div class="wrap">
-      <div class="steps">
-        <div class="step"><div class="num">STEP 1</div><h3>Send the photos</h3><p>Shoot on any phone, room by room, in the order you&rsquo;d walk a buyer through. That&rsquo;s the only thing we need.</p></div>
-        <div class="step"><div class="num">STEP 2</div><h3>We direct the film</h3><p>Camera moves, color, and pacing &mdash; composed and reviewed by a human, not dumped out by a machine. Every cut is checked before you see it.</p></div>
-        <div class="step"><div class="num">STEP 3</div><h3>Delivered in 48 hours</h3><p>The full walkthrough film plus your enhanced stills, formatted for the MLS, YouTube, and every social feed.</p></div>
+      <div class="act-head rise">
+        <span class="slate">The Process</span>
+        <h2>Three takes. You never touch a timeline.</h2>
+        <p class="lede">Composed and reviewed by a human, not dumped out by a machine.</p>
+      </div>
+      <div class="takes">
+        <div class="take rise" data-d="1">
+          <div class="big">01</div>
+          <div class="no">Take 01 &middot; You</div>
+          <h3>Send the photos</h3>
+          <p>Shoot on any phone, room by room, in the order you&rsquo;d walk a buyer through. That&rsquo;s the only thing we need.</p>
+        </div>
+        <div class="take rise" data-d="2">
+          <div class="big">02</div>
+          <div class="no">Take 02 &middot; Us</div>
+          <h3>We direct the film</h3>
+          <p>Camera moves, color, and pacing &mdash; composed and checked by a human. Every cut is reviewed before you see it.</p>
+        </div>
+        <div class="take rise" data-d="3">
+          <div class="big">03</div>
+          <div class="no">Take 03 &middot; Delivered</div>
+          <h3>Live in 48 hours</h3>
+          <p>The full walkthrough film plus your enhanced stills, formatted for the MLS, YouTube, and every social feed.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="pricing">
-    <div class="wrap center">
-      <span class="eyebrow">Packages</span>
-      <h2 class="sec-title" style="margin-top:14px">See it first. Pay when you approve it.</h2>
-      <p class="sec-sub">Start with a free sample of your own listing. Move up only when it&rsquo;s earning you showings.</p>
-    </div>
+  <!-- ACT 6 -->
+  <section class="act bone" id="pricing">
     <div class="wrap">
+      <div class="act-head center rise">
+        <span class="slate" style="justify-content:center">Packages</span>
+        <h2>See it first. Pay when you approve it.</h2>
+        <p class="lede">Start with a free sample of your own listing. Move up only when it&rsquo;s earning you showings.</p>
+      </div>
       <div class="tiers">
-        <div class="tier">
+        <div class="tier rise" data-d="1">
           <div class="tname">The Sample</div><div class="amt free">Free</div>
           <ul><li>One short teaser of your real listing</li><li>See the quality before you spend a cent</li><li>No card, no commitment</li></ul>
-          <a href="#sample" class="btn btn-light">Claim it</a>
+          <a href="#sample" class="btn btn-ghost">Claim it</a>
         </div>
-        <div class="tier feature">
+        <div class="tier feature rise" data-d="1">
           <div class="tname">Listing Film</div><div class="amt">$500 <small>/ listing</small></div>
           <ul><li>Full cinematic walkthrough film</li><li>5 enhanced hero photos</li><li>MLS + social formats</li><li>48-hour delivery</li></ul>
-          <a href="#sample" class="btn btn-dark">Start this listing</a>
+          <a href="#sample" class="btn btn-brass">Start this listing</a>
         </div>
-        <div class="tier">
+        <div class="tier rise" data-d="2">
           <div class="tname">Full Suite</div><div class="amt">$1,250 <small>/ listing</small></div>
           <ul><li>Everything in Listing Film</li><li>Every photo enhanced</li><li>Vertical social cutdowns</li></ul>
-          <a href="#sample" class="btn btn-light">Choose Suite</a>
+          <a href="#sample" class="btn btn-ghost">Choose Suite</a>
         </div>
-        <div class="tier">
+        <div class="tier rise" data-d="3">
           <div class="tname">Portfolio</div><div class="amt">$2,500 <small>/ month</small></div>
           <ul><li>Every listing, every month</li><li>We run your listing social</li><li>Priority same-day turns</li></ul>
-          <a href="#sample" class="btn btn-light">Talk to us</a>
+          <a href="#sample" class="btn btn-ghost">Talk to us</a>
         </div>
       </div>
-      <div class="deposit">
+      <div class="deposit rise">
         <span class="k">$200</span>
         <p><b>You never pay for something you haven&rsquo;t seen.</b> Paid films start with a $200 deposit that covers production; the balance is due only when you approve the final cut. If it isn&rsquo;t right, you don&rsquo;t pay the rest.</p>
       </div>
     </div>
   </section>
 
-  <section class="cta-sec" id="sample">
+  <!-- ACT 7 -->
+  <section class="act theater book" id="sample">
     <div class="wrap">
-      <div class="cta-grid">
-        <div>
-          <span class="eyebrow">Free sample</span>
-          <h2 style="margin-top:14px">Send us one listing.<br>We&rsquo;ll film it &mdash; on us.</h2>
-          <p class="sec-sub">Drop the address or listing link. We&rsquo;ll turn it into a short cinematic teaser and send it back, so you can see exactly what your buyers would watch.</p>
+      <div class="book-grid">
+        <div class="rise">
+          <span class="slate">Free Sample</span>
+          <h2>Send us one listing.<br>We&rsquo;ll film it &mdash; on us.</h2>
+          <p class="lede">Drop the address or listing link. We&rsquo;ll turn it into a short cinematic teaser and send it back, so you see exactly what your buyers would watch.</p>
         </div>
-        <div>
+        <div class="rise" data-d="1">
           <form id="leadForm">
             <input type="text" name="name" placeholder="Your name" required>
             <input type="email" name="email" placeholder="Email we&rsquo;ll send the film to" required>
             <input type="text" name="listing" placeholder="Listing address or MLS link" required>
-            <button type="submit" class="btn btn-dark">Claim my free sample</button>
+            <button type="submit" class="btn btn-brass">Claim my free sample</button>
             <div class="form-note">One free teaser per agent. We reply within one business day.</div>
           </form>
-          <div class="form-done" id="formDone">Got it &mdash; your sample is in the queue. Check your inbox within a day.</div>
+          <div class="form-done" id="formDone"><b>Got it.</b> Your sample is in the queue &mdash; check your inbox within a day.</div>
         </div>
       </div>
     </div>
@@ -314,24 +571,185 @@
 
   <footer>
     <div class="wrap">
-      <div class="mark" style="font-size:16px">Estate<span class="sl">Cinema</span></div>
+      <div class="mark">Estate<span class="dot"></span><span class="cin">Cinema</span></div>
       <div>Cinematic listing films &amp; photo enrichment &middot; Made from your photos</div>
     </div>
   </footer>
 </div>
 
 <script>
+  var FILM = "media/hero-web.mp4";
   (function(){
-    var ba=document.getElementById('ba'), r=document.getElementById('baRange');
-    if(ba&&r){ r.addEventListener('input', function(){ ba.style.setProperty('--pos', r.value+'%'); }); }
-    var thumbs=document.getElementById('gthumbs'), main=document.getElementById('gmainImg');
-    if(thumbs&&main){ thumbs.addEventListener('click', function(e){
-      var t=e.target.closest('img'); if(!t) return;
-      main.src=t.getAttribute('data-full')||t.src;
-      thumbs.querySelectorAll('img').forEach(function(i){ i.classList.remove('active'); });
-      t.classList.add('active');
-    }); }
-    var f=document.getElementById('leadForm'), done=document.getElementById('formDone');
+    "use strict";
+    var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+    /* one film asset, shared by hero + sample listing (no duplicate bytes) */
+    var hero = document.getElementById('heroReel');
+    if(hero && FILM){ hero.src = FILM; hero.load(); var pr = hero.play(); if(pr && pr.catch) pr.catch(function(){}); }
+
+    /* sample-listing: click play -> the actual film, with sound */
+    var lp = document.getElementById('listingPlay'), lscreen = document.getElementById('listingScreen');
+    if(lp && !FILM){ lp.style.display = 'none'; }
+    if(lp && lscreen && FILM){
+      lp.addEventListener('click', function(){
+        var v = document.createElement('video');
+        v.className = 'reel'; v.src = FILM; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline','');
+        lscreen.appendChild(v);
+        lp.style.display = 'none';
+        var img = document.getElementById('gmainImg'); if(img) img.style.opacity = '0';
+        var cnt = lscreen.querySelector('.chip.count'); if(cnt) cnt.style.display = 'none';
+        var play = v.play(); if(play && play.catch) play.catch(function(){});
+      });
+    }
+
+    /* nav compress + atmosphere parallax on scroll */
+    var nav = document.getElementById('nav');
+    var atmoBg = document.getElementById('atmoBg');
+    var onScroll = function(){
+      nav.classList.toggle('shrunk', window.scrollY > 40);
+      if(atmoBg && !rm){
+        var r = atmoBg.parentElement.getBoundingClientRect();
+        if(r.bottom > 0 && r.top < innerHeight){
+          atmoBg.style.transform = 'translateY(' + ((r.top - innerHeight/2) * -0.08).toFixed(1) + 'px)';
+        }
+      }
+    };
+    onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+    /* ---- 3D scroll intro: perspective-projected warp field, scroll-driven ---- */
+    (function(){
+      var intro = document.getElementById('intro'), track = document.getElementById('introTrack'),
+          word = document.getElementById('introWord'), ey = document.getElementById('introEy'),
+          hint = document.getElementById('introHint'), cv = document.getElementById('warp');
+      if(rm || !intro || !cv){ document.body.classList.add('intro-done'); return; }
+      if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      window.scrollTo(0,0);
+
+      var ctx = cv.getContext('2d'), W=0, H=0, DPR = Math.min(window.devicePixelRatio||1, 2);
+      function resize(){ W = cv.width = Math.round(innerWidth*DPR); H = cv.height = Math.round(innerHeight*DPR); }
+      resize(); addEventListener('resize', resize, {passive:true});
+
+      var DEPTH = 1000, SPREAD = DEPTH*0.92;
+      var N = Math.max(240, Math.min(620, Math.floor(innerWidth*0.42)));
+      var pts = [];
+      for(var i=0;i<N;i++){ pts.push({ x:Math.random()*2-1, y:Math.random()*2-1, z:Math.random()*DEPTH, w:Math.random() }); }
+
+      var idle = 0, raf = null;
+      function lerp(a,b,t){ return a + (b-a)*t; }
+      function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+      function frame(){
+        var th = track.offsetHeight || (innerHeight*2.2);
+        var p = clamp(window.scrollY / th, 0, 1);       // 0 at top -> 1 when site reaches viewport top
+        idle += 0.6;
+        var travel = p*DEPTH*3 + idle;
+
+        var cx = W*0.5, cy = H*0.46, focal = Math.min(W,H)*0.9;
+        ctx.clearRect(0,0,W,H);
+        ctx.globalCompositeOperation = 'lighter';
+
+        // central projector glow, intensifies as you fly in
+        var gr = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(W,H)*0.5);
+        var gi = 0.05 + p*0.22;
+        gr.addColorStop(0, 'rgba(230,206,156,'+gi+')');
+        gr.addColorStop(1, 'rgba(230,206,156,0)');
+        ctx.fillStyle = gr; ctx.fillRect(0,0,W,H);
+
+        for(var i=0;i<N;i++){
+          var pt = pts[i];
+          var z = pt.z - travel;
+          z = ((z % DEPTH) + DEPTH) % DEPTH; if(z < 1) z = 1;
+          var f = focal / z;
+          var sx = cx + pt.x*SPREAD*f, sy = cy + pt.y*SPREAD*f;
+          if(sx < -50 || sx > W+50 || sy < -50 || sy > H+50) continue;
+          var near = 1 - z/DEPTH;
+          var a = clamp(near*1.15, 0.04, 1);
+          var rad = clamp(near*3.4*DPR + 0.4, 0.4, 4.2*DPR);
+          var col = pt.w > 0.62 ? '245,239,225' : '226,175,96';
+          // warp streak when close
+          if(z < DEPTH*0.26){
+            var z2 = z + DEPTH*0.10, f2 = focal/z2;
+            ctx.strokeStyle = 'rgba('+col+','+(a*0.5)+')';
+            ctx.lineWidth = rad*0.8;
+            ctx.beginPath(); ctx.moveTo(cx + pt.x*SPREAD*f2, cy + pt.y*SPREAD*f2); ctx.lineTo(sx, sy); ctx.stroke();
+          }
+          ctx.fillStyle = 'rgba('+col+','+a+')';
+          ctx.beginPath(); ctx.arc(sx, sy, rad, 0, 6.2832); ctx.fill();
+        }
+        ctx.globalCompositeOperation = 'source-over';
+
+        // wordmark: settle, then fly through
+        var scale = p < 0.7 ? lerp(0.72, 1.06, p/0.7) : lerp(1.06, 5.4, (p-0.7)/0.3);
+        var rotX = (0.5 - p) * 7;
+        word.style.transform = 'translateZ(0) scale('+scale.toFixed(3)+') rotateX('+rotX.toFixed(2)+'deg)';
+        ey.style.opacity = clamp(p/0.09, 0, 1) * clamp(1-(p-0.6)/0.2, 0, 1);
+        word.style.opacity = clamp(1 - (p-0.72)/0.2, 0, 1);
+        hint.style.opacity = clamp(1 - p/0.1, 0, 1);
+        intro.style.opacity = p < 0.7 ? 1 : clamp(1 - (p-0.7)/0.3, 0, 1);
+
+        if(p >= 1){ document.body.classList.add('intro-done'); intro.style.opacity = '0'; raf = null; return; }
+        document.body.classList.remove('intro-done');
+        raf = requestAnimationFrame(frame);
+      }
+      function start(){ if(!raf) raf = requestAnimationFrame(frame); }
+      start();
+      addEventListener('scroll', function(){
+        if(!raf && window.scrollY < (track.offsetHeight||9999)) start();
+      }, {passive:true});
+    })();
+
+    /* scroll reveal + count-up */
+    var counted = false;
+    function runCount(el){
+      var to = parseFloat(el.getAttribute('data-to')), pre = el.getAttribute('data-pre') || '';
+      if(rm){ el.textContent = pre + to; return; }
+      var start = null, dur = 1100;
+      function step(ts){
+        if(!start) start = ts;
+        var p = Math.min((ts - start)/dur, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        el.textContent = pre + Math.round(to * e);
+        if(p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        en.target.classList.add('in');
+        en.target.querySelectorAll && en.target.querySelectorAll('.ct').forEach(runCount);
+        io.unobserve(en.target);
+      });
+    }, {threshold:.18, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rise').forEach(function(el){ io.observe(el); });
+
+    /* before/after slider + one-time teaching nudge */
+    var ba = document.getElementById('ba'), r = document.getElementById('baRange');
+    if(ba && r){
+      r.addEventListener('input', function(){ ba.style.setProperty('--pos', r.value + '%'); ba.classList.remove('nudge'); });
+      if(!rm){
+        var nio = new IntersectionObserver(function(es){
+          es.forEach(function(en){ if(en.isIntersecting){ ba.classList.add('nudge'); nio.unobserve(en.target); } });
+        }, {threshold:.5});
+        nio.observe(ba);
+      }
+    }
+
+    /* listing gallery */
+    var thumbs = document.getElementById('gthumbs'), main = document.getElementById('gmainImg');
+    if(thumbs && main){
+      thumbs.addEventListener('click', function(e){
+        var t = e.target.closest('img'); if(!t) return;
+        main.src = t.getAttribute('data-full') || t.src;
+        thumbs.querySelectorAll('img').forEach(function(i){ i.classList.remove('active'); });
+        t.classList.add('active');
+      });
+    }
+
+    /* lead form */
+    var f = document.getElementById('leadForm'), done = document.getElementById('formDone');
     if(f){ f.addEventListener('submit', function(e){ e.preventDefault(); f.style.display='none'; done.style.display='block'; }); }
   })();
 </script>
+
+</body></html>
